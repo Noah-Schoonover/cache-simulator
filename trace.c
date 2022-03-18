@@ -36,6 +36,8 @@ TraceStatus begin_trace(char *filename) {
 		return TRACE_FAILURE;
 	}
 
+	return TRACE_SUCCESS;
+
 }
 
 /**
@@ -45,11 +47,20 @@ TraceStatus begin_trace(char *filename) {
  */
 TraceStatus get_next_trace() {
 
+	char c;
+
 	// get the next line from the trace file
 	if ((read = getline(&line, &len, trace_file)) != -1) {
 	    printf("Retrieved line of length %zu:\n", read);
 	    printf("%s", line);
-		// sscanf(line, "%d", &d)
+		sscanf(line, "%c %x %d", &c, &memacc.address, &memacc.islma);
+		if (c == 'l') { memacc.type = LOAD; }
+		else if (c == 's') { memacc.type = STORE; }
+		else { printf("invalid memory access type\n"); return TRACE_FAILURE; }
+
+		printf("memacc.type = %d\n", memacc.type);
+		printf("memacc.address = %x\n", memacc.address);
+		printf("memacc.islma = %d\n", memacc.islma);
 	} else {
 		// end of file reached
 		if (line) free(line);

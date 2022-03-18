@@ -1,6 +1,6 @@
 /*************************************************************************
 *      	filename:  lab2.c
-*   	description:  implements the cache simulator
+*   	description:  main function implements the cache simulator
 *
 *       author:  Schoonover, Noah
 *
@@ -15,6 +15,7 @@
 
 #include "config.h"
 #include "trace.h"
+#include "cache.h"
 
 int main(int argc, char *argv[]) {
 
@@ -29,17 +30,20 @@ int main(int argc, char *argv[]) {
 			printf("error reading config file\n");
 			exit(EXIT_FAILURE);
 		}
+		create_cache();
 
 		if (begin_trace(*++argv) == TRACE_FAILURE) {
 			printf("error opening trace file\n");
 			exit(EXIT_FAILURE);
 		}
 
-		int lines = 0; // temp counter for testing
-		while (get_next_trace() != TRACE_END) {
-			lines++;
-		}
+		int lines = 1; // temp counter for testing
+		// while (get_next_trace() != TRACE_END) {
+		// 	lines++;
+		// }
+		get_next_trace();
 		printf("trace file lines: %d\n", lines);
+
 
 		exit(EXIT_SUCCESS);
 
