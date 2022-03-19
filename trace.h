@@ -13,7 +13,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 
+#define TRACE_VERBOSE 1
 typedef enum { TRACE_SUCCESS, TRACE_FAILURE, TRACE_END } TraceStatus;
 typedef enum { LOAD, STORE } AccessType;
 
@@ -23,8 +25,8 @@ typedef enum { LOAD, STORE } AccessType;
  */
 struct memory_access {
     AccessType type;    /* access type: load or store */
-    int address;        /* memory access address */
-    int islma;          /* instructions since last memory access */
+    uint32_t address;        /* memory access address */
+    uint32_t islma;          /* instructions since last memory access */
 } memacc;
 
 TraceStatus begin_trace(char *filename);

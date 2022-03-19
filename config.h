@@ -22,12 +22,12 @@ typedef enum { CONFIG_SUCCESS, CONFIG_FAILURE } ConfigStatus;
  * struct config - globally stores config parameters
  */
 struct config {
-	int line_size;
-	int associativity;
-	int data_size;
-	int replace_policy;
-	int miss_penalty;
-	int write_alloc;
+	unsigned int line_size;
+	unsigned int associativity;
+	unsigned int data_size;
+	unsigned int replace_policy;
+	unsigned int miss_penalty;
+	unsigned int write_alloc;
 } cfg;
 
 ConfigStatus read_config(char *filename);

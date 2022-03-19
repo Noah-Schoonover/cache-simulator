@@ -1,6 +1,6 @@
 /*************************************************************************
-*      	filename:  cache.h
-*   	description:  Header file for cache.c
+*      	filename:  util.h
+*   	description:  Header file for util.c
 *       author:  Schoonover, Noah
 *
 *	    class:       CSE 331
@@ -8,16 +8,12 @@
 *    	assignment:  Lab #2
 *       due:  	     3/21/2022
 *************************************************************************/
-#ifndef CACHE_H
-#define CACHE_H
+#ifndef UTIL_H
+#define UTIL_H
 
 #include <stdio.h>
-#include <stdlib.h>
+#include <stdint.h>
 
-typedef enum { CACHE_SUCCESS, CACHE_FAILURE } CacheStatus;
-
-CacheStatus create_cache();
-CacheStatus query_cache();
-void free_cache();
+void printbin(uint32_t n);
 
 #endif

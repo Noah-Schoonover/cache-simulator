@@ -15,17 +15,12 @@
 
 void verifyConfigParams() {
 
-	if (cfg.line_size <= 0) {
+	if (cfg.line_size == 0) {
 		printf("invalid line size parameter\n");
 		exit(EXIT_FAILURE);
 	}
 
-	if (cfg.associativity < 0) {
-		printf("invalid associativity parameter\n");
-		exit(EXIT_FAILURE);
-	}
-
-	if (cfg.data_size <= 0) {
+	if (cfg.data_size == 0) {
 		printf("invalid data size parameter\n");
 		exit(EXIT_FAILURE);
 	}
@@ -35,7 +30,7 @@ void verifyConfigParams() {
 		exit(EXIT_FAILURE);
 	}
 
-	if (cfg.miss_penalty <= 0) {
+	if (cfg.miss_penalty == 0) {
 		printf("invalid miss penalty parameter\n");
 		exit(EXIT_FAILURE);
 	}
@@ -75,9 +70,6 @@ ConfigStatus read_config(char *filename) {
 			fclose(config_file);
 			return CONFIG_FAILURE;
 		}
-		#if CONFIG_VERBOSE == 1
-		printf("read line: %s", line);
-		#endif // CONFIG_VERBOSE
 		sscanf(line, "%d", &temp_configs[i]);
 	}
 
@@ -91,9 +83,9 @@ ConfigStatus read_config(char *filename) {
 
 	// print the config params to verify success
 	#if CONFIG_VERBOSE == 1
-	printf("\nline_size: %d\n", cfg.line_size);
+	printf("\nline_size: %d B\n", cfg.line_size);
 	printf("associativity: %d\n", cfg.associativity);
-	printf("data_size: %d\n", cfg.data_size);
+	printf("data_size: %d KB\n", cfg.data_size);
 	printf("replace_policy: %d\n", cfg.replace_policy);
 	printf("miss_penalty: %d\n", cfg.miss_penalty);
 	printf("write_alloc: %d\n", cfg.write_alloc);

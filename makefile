@@ -15,12 +15,20 @@ trace.o: trace.h trace.c
 cache.o: cache.h cache.c
 	$(CC) $(CFLAGS_OBJ) cache.c
 
-lab2: lab2.c config.o trace.o cache.o
+util.o: util.h util.c
+	$(CC) $(CFLAGS_OBJ) util.c
+
+log.o: log.h log.c
+	$(CC) $(CFLAGS_OBJ) log.c
+
+lab2: lab2.c config.o trace.o cache.o util.o log.o
 	$(CC) $(CFLAGS_OBJ) lab2.c
 	$(CC) $(CFLAGS) \
 		config.o	\
 		trace.o		\
 		cache.o		\
+		util.o		\
+		log.o		\
 		lab2.o -o lab2
 
 #============================================================ CLEAN
