@@ -15,7 +15,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-#define TRACE_VERBOSE 1
+#define TRACE_VERBOSE 0
 typedef enum { TRACE_SUCCESS, TRACE_FAILURE, TRACE_END } TraceStatus;
 typedef enum { LOAD, STORE } AccessType;
 

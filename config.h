@@ -16,6 +16,9 @@
 
 #define CONFIG_VERBOSE 1
 #define NCONFIG_PARAMS 6
+#define RANDOM_REPLACEMENT 0
+#define FIFO_REPLACEMENT 1
+
 typedef enum { CONFIG_SUCCESS, CONFIG_FAILURE } ConfigStatus;
 
 /**

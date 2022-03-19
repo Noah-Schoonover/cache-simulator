@@ -14,14 +14,12 @@
 #include <stdio.h>
 #include "config.h"
 
-unsigned int log_memory_ops;
-unsigned int log_hits;
-unsigned int log_misses;
-unsigned int log_run_time;
-unsigned int log_memory_access_latency;
-
 void print_log();
-void log_hit();
-void log_miss();
+void log_store();
+void log_store_hit();
+void log_load();
+void log_load_hit();
+void log_other_instructions(unsigned int n);
+void log_dirty_writeback();
 
 #endif

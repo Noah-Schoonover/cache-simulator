@@ -14,6 +14,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define CACHE_VERBOSE 0
 typedef enum { CACHE_SUCCESS, CACHE_FAILURE } CacheStatus;
 
 CacheStatus create_cache();

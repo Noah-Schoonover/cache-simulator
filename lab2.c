@@ -41,15 +41,12 @@ int main(int argc, char *argv[]) {
 			exit(EXIT_FAILURE);
 		}
 
-		// while (get_next_trace() != TRACE_END) {
-		//
-		// }
-		get_next_trace();
-		query_cache();
-		get_next_trace();
-		query_cache();
-		get_next_trace();
-		query_cache();
+		while (get_next_trace() != TRACE_END) {
+			if (memacc.type == STORE) { log_store(); }
+			else { log_load(); }
+			log_other_instructions(memacc.islma);
+			query_cache();
+		}
 
 		free_cache();
 		print_log();

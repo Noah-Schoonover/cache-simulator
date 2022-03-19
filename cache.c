@@ -17,6 +17,7 @@
 #include "string.h"
 #include "log.h"
 #include <stdbool.h>
+#include <time.h>
 
 typedef struct {
 	unsigned int tag;
@@ -74,6 +75,11 @@ CacheStatus create_cache() {
 	}
 	memset(cache, 0, num_lines * sizeof(Line));
 
+	if (cfg.replace_policy == RANDOM_REPLACEMENT) {
+		// initialize random generator
+		srand(time(NULL));   // Initialization, should only be called once.
+	}
+
     return CACHE_SUCCESS;
 
 }
@@ -106,38 +112,89 @@ void insert_cache(uint32_t set, uint32_t tag) {
 
 	uint32_t insert_index = 0;
 	bool found_invalid_index = false;
-	uint32_t start_line = set * 2;
-	uint32_t max_fifo = -1;		/* will overflow to max uint */
-	uint32_t min_fifo = -1;		/* will overflow to max uint */
-	uint32_t min_fifo_index = 0;
+	uint32_t start_line = set * lines_per_set;
 
 	for (int i = start_line; i < start_line + lines_per_set; i++) {
 		// first, search for invalid block
-		if (!found_invalid_index && cache[i].valid == false) {
+		if (!cache[i].valid) {
+			#if CACHE_VERBOSE == 1
+			printf("found invalid index: %u\n", i);
+			#endif
 			insert_index = i;
 			found_invalid_index = true;
+			break;
 		}
-		// otherwise, we will use the fifo counter
-		if (cache[i].fifo > max_fifo) {
-			max_fifo = cache[i].fifo;
-		}
-		if (cache[i].fifo < min_fifo) {
-			min_fifo = cache[i].fifo;
-			min_fifo_index = i;
-		}
-
 	}
 
-	// if all blocks were valid, use fifo index
+	uint32_t max_fifo = 0;
+	uint32_t min_fifo = 0;
+	uint32_t min_fifo_index = 0;
+	bool fifo_init = false;
+
+	// get the min and max fifo
+	for (int i = start_line; i < start_line + lines_per_set; i++) {
+		if (!fifo_init) {
+			// use the first valid fifo as the init
+			// if there are no valid blocks, min and max fifo will be 0
+			if (cache[i].valid) {
+				max_fifo = cache[i].fifo;
+				min_fifo = cache[i].fifo;
+				min_fifo_index = i;
+			}
+			fifo_init = true;
+		} else {
+			// otherwise, we will use the fifo counter
+			if (cache[i].valid && cache[i].fifo > max_fifo) {
+				max_fifo = cache[i].fifo;
+			}
+			if (cache[i].valid && cache[i].fifo < min_fifo) {
+				min_fifo = cache[i].fifo;
+				min_fifo_index = i;
+			}
+		}
+	}
+
+	#if CACHE_VERBOSE == 1
+	printf("FIFO_REPLACEMENT\n");
+	printf("max_fifo: %u\n", max_fifo);
+	printf("min_fifo : %u\n", min_fifo);
+	printf("min_fifo_index: %u\n", min_fifo_index);
+	#endif
+
+
 	if (!found_invalid_index) {
-		insert_index = min_fifo_index;
+
+		if (cfg.replace_policy == RANDOM_REPLACEMENT) {
+			#if CACHE_VERBOSE == 1
+			printf("RANDOM_REPLACEMENT\n");
+			#endif
+			// generate a random number between 0 and lines_per_set-1 (inclusive)
+			int r = rand() % lines_per_set;
+			// add to the start_line to get a random line index in the set
+			insert_index = start_line + r;
+
+		} else {	// FIFO_REPLACEMENT
+			insert_index = min_fifo_index;
+		}
+
 	}
+
+	cache[insert_index].fifo = max_fifo + 1;
+	#if CACHE_VERBOSE == 1
+	printf("insert_index: %u\n", insert_index);
+	#endif
 
 	// now insert the cache line
-	cache[insert_index].fifo = max_fifo + 1;
+	if (cache[insert_index].valid && cache[insert_index].dirty) {
+		log_dirty_writeback();
+	}
 	cache[insert_index].tag = tag;
 	cache[insert_index].valid = true;
-	cache[insert_index].dirty = false;
+	if (memacc.type == STORE) {
+		cache[insert_index].dirty = true;
+	} else {
+		cache[insert_index].dirty = false;
+	}
 
 }
 
@@ -148,30 +205,35 @@ void insert_cache(uint32_t set, uint32_t tag) {
 CacheStatus query_cache() {
 
 	uint32_t set = get_set(memacc.address);
-	printf("set: %d\n", set);
-	printf("set bin:"); printbin(set); printf("\n");
-
 	uint32_t tag = get_tag(memacc.address);
-	printf("tag: %d\n", tag);
-	printf("tag bin:"); printbin(tag); printf("\n");
 
-	uint32_t start_line = set * 2;
-	bool hit = false;
+	#if CACHE_VERBOSE == 1
+	printf("set: %d = ", set); printbin(set); printf("\n");
+	printf("tag: %d = ", tag); printbin(tag); printf("\n");
+	#endif
+
+	uint32_t start_line = set * lines_per_set;
+	#if CACHE_VERBOSE == 1
 	for (int i = start_line; i < start_line + lines_per_set; i++) {
 		printf("line %d---> tag: %d \t valid: %d \t dirty: %d \t fifo: %d\n",
 			i, cache[i].tag, cache[i].valid, cache[i].dirty, cache[i].fifo);
-		if (cache[i].tag == tag) {
-			hit = true;
-			printf("cache hit\n");
-			log_hit();
-			break;
+	}
+	#endif
+
+	for (int i = start_line; i < start_line + lines_per_set; i++) {
+
+		if (cache[i].tag == tag && cache[i].valid) {
+			// cache hit
+
+			if (memacc.type == LOAD) { log_load_hit(); }
+			else { log_store_hit(); cache[i].dirty = true; }
+
+			return CACHE_SUCCESS;
 		}
 	}
 
-	if (!hit) {
-		log_miss();
-		insert_cache(set, tag);
-	}
+	// cache miss
+	insert_cache(set, tag);
 
     return CACHE_SUCCESS;
 
