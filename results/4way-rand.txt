@@ -1,0 +1,34 @@
+==> traces/gcc.trace.out <==
+Total Hit Percentage: 98.71
+Load Hit Percentage: 99.37
+Store Hit Percentage: 97.64
+Total Run Time: 1866700 cycles
+Average Memory Access Latency: 1.63
+
+==> traces/gzip.trace.out <==
+Total Hit Percentage: 66.83
+Load Hit Percentage: 50.26
+Store Hit Percentage: 99.88
+Total Run Time: 8903019 cycles
+Average Memory Access Latency: 17.26
+
+==> traces/mcf.trace.out <==
+Total Hit Percentage: 75.24
+Load Hit Percentage: 96.17
+Store Hit Percentage: 75.06
+Total Run Time: 9837579 cycles
+Average Memory Access Latency: 13.13
+
+==> traces/swim.trace.out <==
+Total Hit Percentage: 97.79
+Load Hit Percentage: 99.61
+Store Hit Percentage: 92.91
+Total Run Time: 1504698 cycles
+Average Memory Access Latency: 2.08
+
+==> traces/twolf.trace.out <==
+Total Hit Percentage: 99.65
+Load Hit Percentage: 99.86
+Store Hit Percentage: 99.09
+Total Run Time: 1532955 cycles
+Average Memory Access Latency: 1.17
