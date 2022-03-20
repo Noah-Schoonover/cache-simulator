@@ -1,0 +1,2 @@
+#!/bin/bash
+(grep --exclude=gdb-get-bp -nrE '//gdb-bp|// gdb-bp' * | cut -d: -f1,2 | while read line; do echo "b $line"; done;) > gdb-bp
