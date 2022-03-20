@@ -44,29 +44,39 @@ CacheStatus create_cache() {
 
     int data_size_bytes = cfg.data_size * (1 << 10);	/* bit hack for data_size * 2^10 */
     num_lines = data_size_bytes / cfg.line_size;
+
+	#if CACHE_VERBOSE == 1
     printf("\ndata_size: %d\n", cfg.data_size);
     printf("data_size_bytes: %d\n", data_size_bytes);
     printf("line_size: %d\n", cfg.line_size);
     printf("num_lines: %d\n", num_lines);
+	#endif
 
-	if (cfg.associativity) { lines_per_set = cfg.associativity; }
-	else { lines_per_set = 1; }
+	if (cfg.associativity) {
+		// direct mapping or n-way associativity
+		lines_per_set = cfg.associativity;
+		sets = num_lines / lines_per_set;
+	}
+	else {
+		// full associativity
+		lines_per_set = num_lines;
+		sets = 1;
+	}
 
-	sets = num_lines / lines_per_set;
 	set_mask = sets - 1;
-	printf("set_mask: %d\n", set_mask);
 	set_bits = __builtin_popcount(set_mask);
-	printf("set_bits: %d\n", set_bits);
-
-	printf("sets: %d\n", sets);
-
 	block_bits = __builtin_popcount(cfg.line_size - 1); 	/* bit hack for log2(line_size) */
-	printf("block_bits: %d\n", block_bits);
 	set_offset = block_bits;
-	printf("set_offset: %d\n", set_offset);
-
 	tag_offset = block_bits + set_bits;
+
+	#if CACHE_VERBOSE == 1
+	printf("set_mask: %d\n", set_mask);
+	printf("set_bits: %d\n", set_bits);
+	printf("sets: %d\n", sets);
+	printf("block_bits: %d\n", block_bits);
+	printf("set_offset: %d\n", set_offset);
 	printf("tag_offset: %d\n", tag_offset);
+	#endif
 
 	cache = malloc(num_lines * sizeof(Line));
 	if (!cache) {
@@ -233,7 +243,10 @@ CacheStatus query_cache() {
 	}
 
 	// cache miss
-	insert_cache(set, tag);
+	// insert into cache unless storing on no-write-allocate
+	if (!(cfg.write_alloc == NO_WRITE_ALLOCATE && memacc.type == STORE)) {
+        insert_cache(set, tag);
+    }
 
     return CACHE_SUCCESS;
 

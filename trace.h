@@ -19,6 +19,8 @@
 typedef enum { TRACE_SUCCESS, TRACE_FAILURE, TRACE_END } TraceStatus;
 typedef enum { LOAD, STORE } AccessType;
 
+char *trace_filename;
+
 /**
  * memacc - a global memory_access struct for storing information from
  * each line in the trace file.

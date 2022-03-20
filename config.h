@@ -14,10 +14,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define CONFIG_VERBOSE 1
+#define CONFIG_VERBOSE 0
 #define NCONFIG_PARAMS 6
 #define RANDOM_REPLACEMENT 0
 #define FIFO_REPLACEMENT 1
+#define NO_WRITE_ALLOCATE 0
+#define WRITE_ALLOCATE 1
 
 typedef enum { CONFIG_SUCCESS, CONFIG_FAILURE } ConfigStatus;
 

@@ -14,6 +14,8 @@
 #include <stdio.h>
 #include "config.h"
 
+#define LOG_VERBOSE 0
+
 void print_log();
 void log_store();
 void log_store_hit();

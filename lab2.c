@@ -17,6 +17,7 @@
 #include "trace.h"
 #include "cache.h"
 #include "log.h"
+#include <string.h>
 
 int main(int argc, char *argv[]) {
 
@@ -40,6 +41,7 @@ int main(int argc, char *argv[]) {
 			printf("error opening trace file\n");
 			exit(EXIT_FAILURE);
 		}
+		trace_filename = strdup(*argv);
 
 		while (get_next_trace() != TRACE_END) {
 			if (memacc.type == STORE) { log_store(); }
@@ -49,7 +51,7 @@ int main(int argc, char *argv[]) {
 		}
 
 		free_cache();
-		print_log();
+		print_log(trace_filename);
 		exit(EXIT_SUCCESS);
 
 	}
