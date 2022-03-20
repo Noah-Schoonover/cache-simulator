@@ -1,6 +1,15 @@
 # cse331-lab2
  cache simulator
 
+## Compilation
+
+Run `make` in the root directory.
+
+Running `make clean` will remove all object files as well as the executable.
+
+## Usage
+
+`./lab2 [config file] [trace file]`
 
 ## References
 
