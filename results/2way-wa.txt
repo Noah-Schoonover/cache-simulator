@@ -19,13 +19,6 @@ Store Hit Percentage: 75.06
 Total Run Time: 13439159 cycles
 Average Memory Access Latency: 18.09
 
-==> traces/ntest.trace.out <==
-Total Hit Percentage: 10.34
-Load Hit Percentage: 10.71
-Store Hit Percentage: 0.00
-Total Run Time: 1883 cycles
-Average Memory Access Latency: 62.86
-
 ==> traces/swim.trace.out <==
 Total Hit Percentage: 97.85
 Load Hit Percentage: 99.70
